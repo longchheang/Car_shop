@@ -1,4 +1,4 @@
-package com.example.car_shop.ui.auth
+package com.example.car_shop.ui.auth.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

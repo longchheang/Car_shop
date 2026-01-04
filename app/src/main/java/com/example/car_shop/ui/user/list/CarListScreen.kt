@@ -1,4 +1,4 @@
-package com.example.car_shop.ui.user
+package com.example.car_shop.ui.user.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

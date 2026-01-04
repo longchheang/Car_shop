@@ -1,4 +1,4 @@
-package com.example.car_shop.ui.admin
+package com.example.car_shop.ui.admin.carForm
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel

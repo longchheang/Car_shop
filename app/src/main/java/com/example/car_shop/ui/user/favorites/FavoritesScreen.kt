@@ -1,4 +1,4 @@
-package com.example.car_shop.ui.user
+package com.example.car_shop.ui.user.favorites
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.car_shop.ui.user.list.CarItem
 
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -6,15 +6,15 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.car_shop.ui.admin.AdminCarFormScreen
-import com.example.car_shop.ui.admin.AdminDashboardScreen
-import com.example.car_shop.ui.admin.AdminInquiriesScreen
-import com.example.car_shop.ui.auth.LoginScreen
-import com.example.car_shop.ui.auth.RegisterScreen
-import com.example.car_shop.ui.user.CarDetailScreen
-import com.example.car_shop.ui.user.CarListScreen
-import com.example.car_shop.ui.user.FavoritesScreen
-import com.example.car_shop.ui.user.ProfileScreen
+import com.example.car_shop.ui.admin.carForm.AdminCarFormScreen
+import com.example.car_shop.ui.admin.dashboard.AdminDashboardScreen
+import com.example.car_shop.ui.admin.inquiries.AdminInquiriesScreen
+import com.example.car_shop.ui.auth.login.LoginScreen
+import com.example.car_shop.ui.auth.register.RegisterScreen
+import com.example.car_shop.ui.user.detail.CarDetailScreen
+import com.example.car_shop.ui.user.list.CarListScreen
+import com.example.car_shop.ui.user.favorites.FavoritesScreen
+import com.example.car_shop.ui.user.profile.ProfileScreen
 
 
 @Composable

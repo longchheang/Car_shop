@@ -1,4 +1,4 @@
-package com.example.car_shop.ui.user
+package com.example.car_shop.ui.user.profile
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

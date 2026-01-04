@@ -1,4 +1,4 @@
-package com.example.car_shop.ui.user
+package com.example.car_shop.ui.user.favorites
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

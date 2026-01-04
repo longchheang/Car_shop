@@ -1,4 +1,4 @@
-package com.example.car_shop.ui.admin
+package com.example.car_shop.ui.admin.inquiries
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

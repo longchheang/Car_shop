@@ -1,4 +1,4 @@
-package com.example.car_shop.ui.admin
+package com.example.car_shop.ui.admin.inquiries
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

@@ -1,4 +1,4 @@
-package com.example.car_shop.ui.admin
+package com.example.car_shop.ui.admin.dashboard
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
