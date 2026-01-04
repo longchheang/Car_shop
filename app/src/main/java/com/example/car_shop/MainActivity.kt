@@ -33,12 +33,12 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    
-                    // Determine start destination based on auth state
+
+                    // UPDATED: start with onboarding if user is not logged in
                     val startDestination = if (authRepository.isUserLoggedIn) {
                         Screen.CarList.route
                     } else {
-                        Screen.Login.route
+                        Screen.Onboarding.route
                     }
 
                     NavGraph(

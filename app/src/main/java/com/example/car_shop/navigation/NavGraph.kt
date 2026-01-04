@@ -11,6 +11,7 @@ import com.example.car_shop.ui.admin.dashboard.AdminDashboardScreen
 import com.example.car_shop.ui.admin.inquiries.AdminInquiriesScreen
 import com.example.car_shop.ui.auth.login.LoginScreen
 import com.example.car_shop.ui.auth.register.RegisterScreen
+import com.example.car_shop.ui.onboarding.OnboardingScreen
 import com.example.car_shop.ui.user.detail.CarDetailScreen
 import com.example.car_shop.ui.user.list.CarListScreen
 import com.example.car_shop.ui.user.favorites.FavoritesScreen
@@ -26,6 +27,11 @@ fun NavGraph(
         navController = navController,
         startDestination = startDestination
     ) {
+      //Onboarding
+        composable(Screen.Onboarding.route) {
+            OnboardingScreen(navController)
+        }
+
         // Auth Screens
         composable(Screen.Login.route) {
             LoginScreen(
