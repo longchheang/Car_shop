@@ -12,6 +12,7 @@ data class Car(
     val mileage: Int = 0,
     val fuelType: String = "",
     val transmission: String = "",
+    val bodyType: String = "",
     val createdAt: Long = System.currentTimeMillis(),
     val isAvailable: Boolean = true
 ) {
@@ -28,6 +29,7 @@ data class Car(
             "mileage" to mileage,
             "fuelType" to fuelType,
             "transmission" to transmission,
+            "bodyType" to bodyType,
             "createdAt" to createdAt,
             "isAvailable" to isAvailable
         )
@@ -48,6 +50,7 @@ data class Car(
                 mileage = (map["mileage"] as? Long)?.toInt() ?: 0,
                 fuelType = map["fuelType"] as? String ?: "",
                 transmission = map["transmission"] as? String ?: "",
+                bodyType = map["bodyType"] as? String ?: "",
                 createdAt = map["createdAt"] as? Long ?: System.currentTimeMillis(),
                 isAvailable = map["isAvailable"] as? Boolean ?: true
             )

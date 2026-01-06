@@ -15,8 +15,8 @@ import javax.inject.Singleton
 
 @Singleton
 class CarRepository @Inject constructor(
-    private val firestore: FirebaseFirestore,
-    private val storage: FirebaseStorage
+    firestore: FirebaseFirestore,
+    storage: FirebaseStorage
 ) {
     private val carsCollection = firestore.collection("cars")
     private val storageRef = storage.reference.child("car_images")

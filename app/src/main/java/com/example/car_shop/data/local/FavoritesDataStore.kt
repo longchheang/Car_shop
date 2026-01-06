@@ -40,18 +40,4 @@ class FavoritesDataStore @Inject constructor(
             preferences[favoritesKey] = currentFavorites
         }
     }
-
-    fun isFavorite(carId: String): Boolean {
-        var isFav = false
-        context.dataStore.data.map { preferences ->
-            isFav = preferences[favoritesKey]?.contains(carId) ?: false
-        }
-        return isFav
-    }
-
-    suspend fun clearFavorites() {
-        context.dataStore.edit { preferences ->
-            preferences.remove(favoritesKey)
-        }
-    }
 }

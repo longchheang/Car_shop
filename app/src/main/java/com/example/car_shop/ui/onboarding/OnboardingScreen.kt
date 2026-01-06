@@ -103,7 +103,7 @@ fun OnboardingScreen(navController: NavController) {
             )
         ) {
             Text(
-                "Next",
+                "Get Start",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )

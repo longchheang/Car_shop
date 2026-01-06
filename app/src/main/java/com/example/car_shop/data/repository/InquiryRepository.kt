@@ -99,4 +99,16 @@ class InquiryRepository @Inject constructor(
             Result.failure(e)
         }
     }
+
+    // Delete inquiry (Admin)
+    suspend fun deleteInquiry(inquiryId: String): Result<Unit> {
+        return try {
+            inquiriesCollection.document(inquiryId)
+                .delete()
+                .await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

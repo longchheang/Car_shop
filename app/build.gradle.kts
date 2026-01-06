@@ -45,7 +45,7 @@ android {
 }
 
 dependencies {
-
+    implementation("androidx.compose.material:material-icons-extended:1.7.0")
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)

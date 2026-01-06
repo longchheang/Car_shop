@@ -8,6 +8,7 @@ data class Inquiry(
     val userName: String = "",
     val userEmail: String = "",
     val userPhone: String = "",
+    val userProfileImageUrl: String = "",
     val message: String = "",
     val reply: String = "",
     val status: InquiryStatus = InquiryStatus.PENDING,
@@ -22,6 +23,7 @@ data class Inquiry(
             put("userName", userName)
             put("userEmail", userEmail)
             put("userPhone", userPhone)
+            put("userProfileImageUrl", userProfileImageUrl)
             put("message", message)
             put("reply", reply)
             put("status", status.name)
@@ -40,6 +42,7 @@ data class Inquiry(
                 userName = map["userName"] as? String ?: "",
                 userEmail = map["userEmail"] as? String ?: "",
                 userPhone = map["userPhone"] as? String ?: "",
+                userProfileImageUrl = map["userProfileImageUrl"] as? String ?: "",
                 message = map["message"] as? String ?: "",
                 reply = map["reply"] as? String ?: "",
                 status = InquiryStatus.valueOf(map["status"] as? String ?: "PENDING"),

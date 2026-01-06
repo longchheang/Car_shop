@@ -1,7 +1,7 @@
 package com.example.car_shop.navigation
 
 sealed class Screen(val route: String) {
-
+    object Splash : Screen("splash")
     object Onboarding : Screen("onboarding")
 
     object Login : Screen("login")
@@ -17,4 +17,9 @@ sealed class Screen(val route: String) {
         fun createRoute(carId: String? = null) = if (carId != null) "admin_car_form?carId=$carId" else "admin_car_form"
     }
     object AdminInquiries : Screen("admin_inquiries")
+    object EditProfile : Screen("edit_profile")
+
+    // Main Container Screens
+    object UserMain : Screen("user_main")
+    object AdminMain : Screen("admin_main")
 }

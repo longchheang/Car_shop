@@ -26,6 +26,19 @@ class AdminDashboardViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AdminDashboardUiState())
     val uiState: StateFlow<AdminDashboardUiState> = _uiState.asStateFlow()
 
+    init {
+        // Load total user count for dashboard stats
+        viewModelScope.launch {
+            authRepository.getTotalUsers()
+                .onSuccess { count ->
+                    _uiState.value = _uiState.value.copy(totalUsers = count)
+                }
+                .onFailure { error ->
+                    _uiState.value = _uiState.value.copy(error = error.message)
+                }
+        }
+    }
+
     fun deleteCar(carId: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isDeleting = true)
@@ -46,13 +59,11 @@ class AdminDashboardViewModel @Inject constructor(
         }
     }
 
-    fun logout() {
-        authRepository.logout()
-    }
 }
 
 data class AdminDashboardUiState(
     val isDeleting: Boolean = false,
     val deleteSuccess: Boolean = false,
+    val totalUsers: Int = 0,
     val error: String? = null
 )

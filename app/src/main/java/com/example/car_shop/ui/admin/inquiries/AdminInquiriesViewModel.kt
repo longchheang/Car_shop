@@ -24,6 +24,21 @@ class AdminInquiriesViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AdminInquiriesUiState())
     val uiState: StateFlow<AdminInquiriesUiState> = _uiState.asStateFlow()
 
+    fun showDeleteConfirmation(inquiry: Inquiry) {
+        _uiState.value = _uiState.value.copy(
+            selectedInquiry = inquiry,
+            showDeleteDialog = true,
+            replyError = null
+        )
+    }
+
+    fun hideDeleteConfirmation() {
+        _uiState.value = _uiState.value.copy(
+            selectedInquiry = null,
+            showDeleteDialog = false
+        )
+    }
+
     fun showReplyDialog(inquiry: Inquiry) {
         _uiState.value = _uiState.value.copy(
             selectedInquiry = inquiry,
@@ -70,12 +85,32 @@ class AdminInquiriesViewModel @Inject constructor(
                 }
         }
     }
+
+    fun deleteSelectedInquiry() {
+        val inquiry = _uiState.value.selectedInquiry ?: return
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isDeleting = true)
+
+            inquiryRepository.deleteInquiry(inquiry.id)
+                .onSuccess {
+                    _uiState.value = AdminInquiriesUiState()
+                }
+                .onFailure { error ->
+                    _uiState.value = _uiState.value.copy(
+                        isDeleting = false,
+                        replyError = error.message
+                    )
+                }
+        }
+    }
 }
 
 data class AdminInquiriesUiState(
     val selectedInquiry: Inquiry? = null,
     val replyText: String = "",
     val showReplyDialog: Boolean = false,
+    val showDeleteDialog: Boolean = false,
     val isSendingReply: Boolean = false,
+    val isDeleting: Boolean = false,
     val replyError: String? = null
 )

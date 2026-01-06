@@ -3,9 +3,7 @@ package com.example.car_shop.data.repository
 import com.example.car_shop.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,7 +11,8 @@ import javax.inject.Singleton
 @Singleton
 class AuthRepository @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val storage: FirebaseStorage
 ) {
     val currentUserId: String?
         get() = firebaseAuth.currentUser?.uid
@@ -78,19 +77,52 @@ class AuthRepository @Inject constructor(
         }
     }
 
+    // Get total number of users (for admin dashboard stats)
+    suspend fun getTotalUsers(): Result<Int> {
+        return try {
+            // Count only non-admin users
+            val snapshot = firestore.collection("users")
+                .whereEqualTo("isAdmin", false)
+                .get()
+                .await()
+            Result.success(snapshot.size())
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // Upload profile image
+    suspend fun uploadProfileImage(uri: android.net.Uri): Result<String> {
+        return try {
+            val userId = currentUserId ?: throw Exception("User not logged in")
+            val ref = storage.reference.child("profile_images/$userId/${System.currentTimeMillis()}.jpg")
+            
+            ref.putFile(uri).await()
+            val downloadUrl = ref.downloadUrl.await().toString()
+            
+            Result.success(downloadUrl)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     // Update user profile
-    suspend fun updateProfile(name: String, phone: String): Result<Unit> {
+    suspend fun updateProfile(name: String, phone: String, imageUrl: String? = null): Result<Unit> {
         return try {
             val userId = currentUserId ?: throw Exception("User not logged in")
             
+            val updates = mutableMapOf<String, Any>(
+                "name" to name,
+                "phone" to phone
+            )
+            
+            if (imageUrl != null) {
+                updates["profileImageUrl"] = imageUrl
+            }
+            
             firestore.collection("users")
                 .document(userId)
-                .update(
-                    mapOf(
-                        "name" to name,
-                        "phone" to phone
-                    )
-                )
+                .update(updates)
                 .await()
 
             Result.success(Unit)
@@ -104,12 +136,4 @@ class AuthRepository @Inject constructor(
         firebaseAuth.signOut()
     }
 
-    // Observe auth state
-    fun observeAuthState(): Flow<Boolean> = callbackFlow {
-        val listener = FirebaseAuth.AuthStateListener { auth ->
-            trySend(auth.currentUser != null)
-        }
-        firebaseAuth.addAuthStateListener(listener)
-        awaitClose { firebaseAuth.removeAuthStateListener(listener) }
-    }
 }

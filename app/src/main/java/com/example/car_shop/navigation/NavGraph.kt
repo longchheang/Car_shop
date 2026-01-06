@@ -7,15 +7,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.car_shop.ui.admin.carForm.AdminCarFormScreen
-import com.example.car_shop.ui.admin.dashboard.AdminDashboardScreen
 import com.example.car_shop.ui.admin.inquiries.AdminInquiriesScreen
 import com.example.car_shop.ui.auth.login.LoginScreen
 import com.example.car_shop.ui.auth.register.RegisterScreen
 import com.example.car_shop.ui.onboarding.OnboardingScreen
 import com.example.car_shop.ui.user.detail.CarDetailScreen
-import com.example.car_shop.ui.user.list.CarListScreen
-import com.example.car_shop.ui.user.favorites.FavoritesScreen
-import com.example.car_shop.ui.user.profile.ProfileScreen
+import com.example.car_shop.ui.profile.EditProfileScreen
 
 
 @Composable
@@ -27,6 +24,17 @@ fun NavGraph(
         navController = navController,
         startDestination = startDestination
     ) {
+        // Splash
+        composable(Screen.Splash.route) {
+            com.example.car_shop.ui.splash.SplashScreen(
+                onNavigate = { route ->
+                    navController.navigate(route) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
       //Onboarding
         composable(Screen.Onboarding.route) {
             OnboardingScreen(navController)
@@ -40,7 +48,7 @@ fun NavGraph(
                 },
                 onLoginSuccess = { isAdmin ->
                     navController.navigate(
-                        if (isAdmin) Screen.AdminDashboard.route else Screen.CarList.route
+                        if (isAdmin) Screen.AdminMain.route else Screen.UserMain.route
                     ) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
@@ -54,24 +62,21 @@ fun NavGraph(
                     navController.popBackStack()
                 },
                 onRegisterSuccess = {
-                    navController.navigate(Screen.CarList.route) {
+                    navController.navigate(Screen.UserMain.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
                 }
             )
         }
 
-        // User Screens
-        composable(Screen.CarList.route) {
-            CarListScreen(
+        // Main User Screen (Containers)
+        composable(Screen.UserMain.route) {
+            com.example.car_shop.ui.user.main.UserMainScreen(
                 onCarClick = { carId ->
                     navController.navigate(Screen.CarDetail.createRoute(carId))
                 },
-                onFavoritesClick = {
-                    navController.navigate(Screen.Favorites.route)
-                },
-                onProfileClick = {
-                    navController.navigate(Screen.Profile.route)
+                onEditProfile = {
+                   navController.navigate(Screen.EditProfile.route)
                 },
                 onLogout = {
                     navController.navigate(Screen.Login.route) {
@@ -80,6 +85,27 @@ fun NavGraph(
                 }
             )
         }
+
+        // Main Admin Screen (Containers)
+        composable(Screen.AdminMain.route) {
+            com.example.car_shop.ui.admin.main.AdminMainScreen(
+                onAddCar = {
+                    navController.navigate(Screen.AdminCarForm.createRoute())
+                },
+                onEditCar = { carId ->
+                    navController.navigate(Screen.AdminCarForm.createRoute(carId))
+                },
+                onEditProfile = {
+                    navController.navigate(Screen.EditProfile.route)
+                },
+                onLogout = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            )
+        }
+
 
         composable(
             route = Screen.CarDetail.route,
@@ -90,50 +116,6 @@ fun NavGraph(
                 carId = carId,
                 onNavigateBack = {
                     navController.popBackStack()
-                }
-            )
-        }
-
-        composable(Screen.Favorites.route) {
-            FavoritesScreen(
-                onCarClick = { carId ->
-                    navController.navigate(Screen.CarDetail.createRoute(carId))
-                },
-                onNavigateBack = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-        composable(Screen.Profile.route) {
-            ProfileScreen(
-                onNavigateBack = {
-                    navController.popBackStack()
-                },
-                onLogout = {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(0) { inclusive = true }
-                    }
-                }
-            )
-        }
-
-        // Admin Screens
-        composable(Screen.AdminDashboard.route) {
-            AdminDashboardScreen(
-                onAddCar = {
-                    navController.navigate(Screen.AdminCarForm.createRoute())
-                },
-                onEditCar = { carId ->
-                    navController.navigate(Screen.AdminCarForm.createRoute(carId))
-                },
-                onViewInquiries = {
-                    navController.navigate(Screen.AdminInquiries.route)
-                },
-                onLogout = {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(0) { inclusive = true }
-                    }
                 }
             )
         }
@@ -156,7 +138,11 @@ fun NavGraph(
         }
 
         composable(Screen.AdminInquiries.route) {
-            AdminInquiriesScreen(
+            AdminInquiriesScreen()
+        }
+
+        composable(Screen.EditProfile.route) {
+            EditProfileScreen(
                 onNavigateBack = {
                     navController.popBackStack()
                 }

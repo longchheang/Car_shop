@@ -6,6 +6,7 @@ data class User(
     val name: String = "",
     val phone: String = "",
     val isAdmin: Boolean = false,
+    val profileImageUrl: String = "",
     val createdAt: Long = System.currentTimeMillis()
 ) {
     fun toMap(): Map<String, Any> {
@@ -14,6 +15,7 @@ data class User(
             "name" to name,
             "phone" to phone,
             "isAdmin" to isAdmin,
+            "profileImageUrl" to profileImageUrl,
             "createdAt" to createdAt
         )
     }
@@ -26,6 +28,7 @@ data class User(
                 name = map["name"] as? String ?: "",
                 phone = map["phone"] as? String ?: "",
                 isAdmin = map["isAdmin"] as? Boolean ?: false,
+                profileImageUrl = map["profileImageUrl"] as? String ?: "",
                 createdAt = map["createdAt"] as? Long ?: System.currentTimeMillis()
             )
         }

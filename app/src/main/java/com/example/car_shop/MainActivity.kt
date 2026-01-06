@@ -35,11 +35,8 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
 
                     // UPDATED: start with onboarding if user is not logged in
-                    val startDestination = if (authRepository.isUserLoggedIn) {
-                        Screen.CarList.route
-                    } else {
-                        Screen.Onboarding.route
-                    }
+
+                    val startDestination = Screen.Splash.route
 
                     NavGraph(
                         navController = navController,

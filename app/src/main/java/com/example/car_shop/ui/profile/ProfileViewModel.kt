@@ -1,5 +1,6 @@
-package com.example.car_shop.ui.user.profile
+package com.example.car_shop.ui.profile
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.car_shop.data.model.User
@@ -55,6 +56,36 @@ class ProfileViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(phone = phone, error = null, successMessage = null)
     }
 
+    fun uploadProfileImage(uri: Uri) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isUploadingImage = true, error = null)
+
+            authRepository.uploadProfileImage(uri)
+                .onSuccess { downloadUrl ->
+                    // Update user profile with new image URL
+                    authRepository.updateProfile(
+                        name = uiState.value.name,
+                        phone = uiState.value.phone,
+                        imageUrl = downloadUrl
+                    ).onSuccess {
+                        _uiState.value = _uiState.value.copy(isUploadingImage = false)
+                        loadProfile()
+                    }.onFailure { error ->
+                        _uiState.value = _uiState.value.copy(
+                            isUploadingImage = false,
+                            error = error.message
+                        )
+                    }
+                }
+                .onFailure { error ->
+                    _uiState.value = _uiState.value.copy(
+                        isUploadingImage = false,
+                        error = error.message
+                    )
+                }
+        }
+    }
+
     fun updateProfile() {
         val name = _uiState.value.name
         val phone = _uiState.value.phone
@@ -95,6 +126,7 @@ data class ProfileUiState(
     val phone: String = "",
     val isLoading: Boolean = true,
     val isUpdating: Boolean = false,
+    val isUploadingImage: Boolean = false,
     val error: String? = null,
     val successMessage: String? = null
 )

@@ -95,6 +95,7 @@ class CarDetailViewModel @Inject constructor(
                 userName = currentUser.name,
                 userEmail = currentUser.email,
                 userPhone = currentUser.phone,
+                userProfileImageUrl = currentUser.profileImageUrl,
                 message = message
             )
 
