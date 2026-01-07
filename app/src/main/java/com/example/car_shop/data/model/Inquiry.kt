@@ -12,6 +12,9 @@ data class Inquiry(
     val message: String = "",
     val reply: String = "",
     val status: InquiryStatus = InquiryStatus.PENDING,
+    val userHasRead: Boolean = true, // Default true because user knows they sent it. False when admin replies.
+    val adminHasRead: Boolean = false, // False when created, true when admin sees it.
+    val hiddenByUser: Boolean = false, // True when user hides the inquiry from their view
     val createdAt: Long = System.currentTimeMillis(),
     val repliedAt: Long? = null
 ) {
@@ -27,6 +30,9 @@ data class Inquiry(
             put("message", message)
             put("reply", reply)
             put("status", status.name)
+            put("userHasRead", userHasRead)
+            put("adminHasRead", adminHasRead)
+            put("hiddenByUser", hiddenByUser)
             put("createdAt", createdAt)
             repliedAt?.let { put("repliedAt", it) }
         }
@@ -46,6 +52,9 @@ data class Inquiry(
                 message = map["message"] as? String ?: "",
                 reply = map["reply"] as? String ?: "",
                 status = InquiryStatus.valueOf(map["status"] as? String ?: "PENDING"),
+                userHasRead = map["userHasRead"] as? Boolean ?: true,
+                adminHasRead = map["adminHasRead"] as? Boolean ?: false,
+                hiddenByUser = map["hiddenByUser"] as? Boolean ?: false,
                 createdAt = map["createdAt"] as? Long ?: System.currentTimeMillis(),
                 repliedAt = map["repliedAt"] as? Long
             )

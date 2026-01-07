@@ -29,6 +29,7 @@ import com.example.car_shop.ui.profile.ProfileScreen
 fun UserMainScreen(
     onCarClick: (String) -> Unit,
     onEditProfile: () -> Unit,
+    onSeeHelp: () -> Unit,
     onLogout: () -> Unit
 ) {
     val navController = rememberNavController()
@@ -71,7 +72,8 @@ fun UserMainScreen(
         ) {
             composable(Screen.CarList.route) {
                 CarListScreen(
-    onCarClick = onCarClick
+                    onCarClick = onCarClick,
+                    onSeeHelp = onSeeHelp
                 )
             }
             composable(Screen.Favorites.route) {
@@ -85,6 +87,7 @@ fun UserMainScreen(
                     onLogout = onLogout
                 )
             }
+
         }
     }
 }

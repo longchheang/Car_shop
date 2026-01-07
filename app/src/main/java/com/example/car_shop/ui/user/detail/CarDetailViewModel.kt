@@ -27,6 +27,17 @@ class CarDetailViewModel @Inject constructor(
     private val _isFavorite = MutableStateFlow(false)
     val isFavorite: StateFlow<Boolean> = _isFavorite.asStateFlow()
 
+    private val _isAdmin = MutableStateFlow(false)
+    val isAdmin: StateFlow<Boolean> = _isAdmin.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            // Check if current user is admin
+            val currentUser = authRepository.getCurrentUser().getOrNull()
+            _isAdmin.value = currentUser?.isAdmin == true
+        }
+    }
+
     fun loadCar(carId: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)

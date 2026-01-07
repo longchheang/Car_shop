@@ -1,5 +1,6 @@
 package com.example.car_shop.ui.user.list
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,12 +18,16 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -32,7 +37,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -51,16 +56,39 @@ import java.util.Locale
 @Composable
 fun CarListScreen(
     viewModel: CarListViewModel = hiltViewModel(),
-    onCarClick: (String) -> Unit
+    onCarClick: (String) -> Unit,
+    onSeeHelp: () -> Unit
 ) {
     val cars by viewModel.cars.collectAsState()
     val favorites by viewModel.favorites.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
+    val unreadCount by viewModel.unreadInquiriesCount.collectAsState()
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Car Shop") }
+                title = { Text("Car Shop") },
+                actions = {
+                    IconButton(onClick = onSeeHelp) {
+                        if (unreadCount > 0) {
+                            BadgedBox(
+                                badge = {
+                                    Badge { Text(text = unreadCount.toString()) }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.Chat,
+                                    contentDescription = "My Inquiries"
+                                )
+                            }
+                        } else {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Chat,
+                                contentDescription = "My Inquiries"
+                            )
+                        }
+                    }
+                }
             )
         }
     ) { padding ->
@@ -157,12 +185,30 @@ fun CarItem(
         Row(
             modifier = Modifier.padding(16.dp)
         ) {
-            AsyncImage(
-                model = car.imageUrl.ifBlank { "https://via.placeholder.com/150" },
-                contentDescription = car.name,
-                modifier = Modifier.size(100.dp),
-                contentScale = ContentScale.Crop
-            )
+            Box(contentAlignment = Alignment.Center) {
+                AsyncImage(
+                    model = car.imageUrl.ifBlank { "https://via.placeholder.com/150" },
+                    contentDescription = car.name,
+                    modifier = Modifier.size(100.dp),
+                    contentScale = ContentScale.Crop
+                )
+
+                if (!car.isAvailable) {
+                    Box(
+                        modifier = Modifier
+                            .size(100.dp)
+                            .background(Color.Black.copy(alpha = 0.6f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "SOLD OUT",
+                            color = Color.White,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.width(16.dp))
 

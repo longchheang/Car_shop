@@ -12,6 +12,7 @@ sealed class Screen(val route: String) {
     }
     object Favorites : Screen("favorites")
     object Profile : Screen("profile")
+    object UserInquiries : Screen("user_inquiries")
     object AdminDashboard : Screen("admin_dashboard")
     object AdminCarForm : Screen("admin_car_form?carId={carId}") {
         fun createRoute(carId: String? = null) = if (carId != null) "admin_car_form?carId=$carId" else "admin_car_form"

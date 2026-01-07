@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -62,6 +63,7 @@ fun CarDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isFavorite by viewModel.isFavorite.collectAsState()
+    val isAdmin by viewModel.isAdmin.collectAsState()
     val scrollState = rememberScrollState()
 
     LaunchedEffect(carId) {
@@ -69,9 +71,9 @@ fun CarDetailScreen(
     }
 
     Scaffold(
-        // Sticky Bottom Bar for the Action Button
+        // Sticky Bottom Bar for the Action Button (only for non-admin users)
         bottomBar = {
-            if (uiState.car != null) {
+            if (uiState.car != null && !isAdmin) {
                 Surface(
                     tonalElevation = 3.dp,
                     shadowElevation = 8.dp
@@ -82,11 +84,15 @@ fun CarDetailScreen(
                         Button(
                             onClick = { viewModel.showInquiryDialog() },
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp)
+                            shape = RoundedCornerShape(12.dp),
+                            enabled = uiState.car!!.isAvailable,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (uiState.car!!.isAvailable) MaterialTheme.colorScheme.primary else Color.Gray
+                            )
                         ) {
                             Icon(Icons.AutoMirrored.Filled.Send, "Send Inquiry")
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Send Inquiry")
+                            Text(if (uiState.car!!.isAvailable) "Send Inquiry" else "Sold Out")
                         }
                     }
                 }
@@ -138,6 +144,22 @@ fun CarDetailScreen(
                                         )
                                     )
                             )
+
+                            if (!car.isAvailable) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(Color.Black.copy(alpha = 0.6f)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "SOLD OUT",
+                                        color = Color.White,
+                                        style = MaterialTheme.typography.displayMedium,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
                         }
 
                         // 2. Content Body (Overlapping the image)

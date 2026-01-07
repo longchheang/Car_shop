@@ -78,6 +78,9 @@ fun NavGraph(
                 onEditProfile = {
                    navController.navigate(Screen.EditProfile.route)
                 },
+                onSeeHelp = {
+                    navController.navigate(Screen.UserInquiries.route)
+                },
                 onLogout = {
                     navController.navigate(Screen.Login.route) {
                         popUpTo(0) { inclusive = true }
@@ -94,6 +97,9 @@ fun NavGraph(
                 },
                 onEditCar = { carId ->
                     navController.navigate(Screen.AdminCarForm.createRoute(carId))
+                },
+                onCarClick = { carId ->
+                    navController.navigate(Screen.CarDetail.createRoute(carId))
                 },
                 onEditProfile = {
                     navController.navigate(Screen.EditProfile.route)
@@ -144,6 +150,14 @@ fun NavGraph(
         composable(Screen.EditProfile.route) {
             EditProfileScreen(
                 onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Screen.UserInquiries.route) {
+            com.example.car_shop.ui.user.inquiries.UserInquiriesScreen(
+                onBack = {
                     navController.popBackStack()
                 }
             )

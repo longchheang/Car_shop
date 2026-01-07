@@ -8,12 +8,16 @@ import com.example.car_shop.data.repository.CarRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import com.example.car_shop.data.repository.AuthRepository
+import com.example.car_shop.data.repository.InquiryRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class CarListViewModel @Inject constructor(
     carRepository: CarRepository,
-    private val favoritesDataStore: FavoritesDataStore
+    private val favoritesDataStore: FavoritesDataStore,
+    private val authRepository: AuthRepository,
+    private val inquiryRepository: InquiryRepository
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -96,6 +100,21 @@ class CarListViewModel @Inject constructor(
             }
         }
     }
+
+    val unreadInquiriesCount: StateFlow<Int> = flow {
+        val userId = authRepository.currentUserId
+        if (userId != null) {
+            emitAll(inquiryRepository.getUserInquiries(userId).map { list ->
+                list.count { !it.userHasRead && it.reply.isNotEmpty() }
+            })
+        } else {
+            emit(0)
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        0
+    )
 
 }
 

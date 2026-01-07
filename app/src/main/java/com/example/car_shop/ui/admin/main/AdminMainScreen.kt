@@ -12,7 +12,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -29,9 +32,12 @@ import com.example.car_shop.ui.profile.ProfileScreen
 fun AdminMainScreen(
     onAddCar: () -> Unit,
     onEditCar: (String) -> Unit,
+    onCarClick: (String) -> Unit,
     onEditProfile: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    viewModel: AdminMainViewModel = androidx.hilt.navigation.compose.hiltViewModel()
 ) {
+    val unreadCount by viewModel.unreadInquiriesCount.collectAsState()
     val navController = rememberNavController()
     val items = listOf(
         BottomNavItem.AdminCars,
@@ -48,7 +54,7 @@ fun AdminMainScreen(
                 val currentDestination = navBackStackEntry?.destination
                 items.forEach { item ->
                     NavigationBarItem(
-                        icon = { Icon(item.icon, contentDescription = item.title) },
+
                         label = { Text(item.title) },
                         selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
                         onClick = {
@@ -58,6 +64,19 @@ fun AdminMainScreen(
                                 }
                                 launchSingleTop = true
                                 restoreState = true
+                            }
+                        },
+                        icon = {
+                            if (item == BottomNavItem.AdminInquiries && unreadCount > 0) {
+                                BadgedBox(
+                                    badge = {
+                                        Badge { Text(text = unreadCount.toString()) }
+                                    }
+                                ) {
+                                    Icon(item.icon, contentDescription = item.title)
+                                }
+                            } else {
+                                Icon(item.icon, contentDescription = item.title)
                             }
                         }
                     )
@@ -73,7 +92,8 @@ fun AdminMainScreen(
             composable(Screen.AdminDashboard.route) {
                 AdminDashboardScreen(
                     onAddCar = onAddCar,
-                    onEditCar = onEditCar
+                    onEditCar = onEditCar,
+                    onCarClick = onCarClick
                 )
             }
             composable(Screen.AdminInquiries.route) {
@@ -83,7 +103,7 @@ fun AdminMainScreen(
                 // Reusing the User Profile Screen, assuming it works for Admin as well.
                 ProfileScreen(
                     onEditProfile = onEditProfile,
-                    onLogout = onLogout
+                    onLogout = onLogout,
                 )
             }
         }

@@ -21,6 +21,12 @@ class AdminInquiriesViewModel @Inject constructor(
             emptyList()
         )
 
+    fun markMessagesAsRead() {
+        viewModelScope.launch {
+            inquiryRepository.markInquiriesAsReadByAdmin()
+        }
+    }
+
     private val _uiState = MutableStateFlow(AdminInquiriesUiState())
     val uiState: StateFlow<AdminInquiriesUiState> = _uiState.asStateFlow()
 

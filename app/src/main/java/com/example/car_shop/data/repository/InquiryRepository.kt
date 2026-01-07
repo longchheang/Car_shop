@@ -78,6 +78,7 @@ class InquiryRepository @Inject constructor(
                     mapOf(
                         "reply" to reply,
                         "status" to InquiryStatus.REPLIED.name,
+                        "userHasRead" to false, // User needs to see this new reply
                         "repliedAt" to System.currentTimeMillis()
                     )
                 )
@@ -106,6 +107,78 @@ class InquiryRepository @Inject constructor(
             inquiriesCollection.document(inquiryId)
                 .delete()
                 .await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun markInquiriesAsReadByUser(userId: String): Result<Unit> {
+        return try {
+            val snapshot = inquiriesCollection
+                .whereEqualTo("userId", userId)
+                .whereEqualTo("userHasRead", false)
+                .get()
+                .await()
+            
+            val batch = firestore.batch()
+            for (doc in snapshot.documents) {
+                batch.update(doc.reference, "userHasRead", true)
+            }
+            batch.commit().await()
+            
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun markInquiriesAsReadByAdmin(): Result<Unit> {
+        return try {
+             val snapshot = inquiriesCollection
+                .whereEqualTo("adminHasRead", false)
+                .get()
+                .await()
+
+            val batch = firestore.batch()
+            for (doc in snapshot.documents) {
+                batch.update(doc.reference, "adminHasRead", true)
+            }
+            batch.commit().await()
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // Hide inquiry (User) - marks as hidden without deleting
+    suspend fun hideInquiry(inquiryId: String): Result<Unit> {
+        return try {
+            inquiriesCollection.document(inquiryId)
+                .update("hiddenByUser", true)
+                .await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // Hide all user inquiries (User)
+    suspend fun hideAllUserInquiries(userId: String): Result<Unit> {
+        return try {
+            val snapshot = inquiriesCollection
+                .whereEqualTo("userId", userId)
+                .whereEqualTo("hiddenByUser", false)
+                .get()
+                .await()
+            
+            val batch = firestore.batch()
+            for (doc in snapshot.documents) {
+                batch.update(doc.reference, "hiddenByUser", true)
+            }
+            batch.commit().await()
+            
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
