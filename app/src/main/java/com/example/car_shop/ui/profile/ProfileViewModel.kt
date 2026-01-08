@@ -120,13 +120,3 @@ class ProfileViewModel @Inject constructor(
     }
 }
 
-data class ProfileUiState(
-    val user: User? = null,
-    val name: String = "",
-    val phone: String = "",
-    val isLoading: Boolean = true,
-    val isUpdating: Boolean = false,
-    val isUploadingImage: Boolean = false,
-    val error: String? = null,
-    val successMessage: String? = null
-)

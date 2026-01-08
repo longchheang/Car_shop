@@ -140,13 +140,3 @@ class CarDetailViewModel @Inject constructor(
         )
     }
 }
-
-data class CarDetailUiState(
-    val car: Car? = null,
-    val isLoading: Boolean = false,
-    val error: String? = null,
-    val showInquiryDialog: Boolean = false,
-    val inquiryMessage: String = "",
-    val isSendingInquiry: Boolean = false,
-    val inquiryError: String? = null
-)
