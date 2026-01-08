@@ -53,8 +53,3 @@ class FavoritesViewModel @Inject constructor(
     }
 }
 
-data class FavoritesUiState(
-    val cars: List<Car> = emptyList(),
-    val isLoading: Boolean = true,
-    val error: String? = null
-)
