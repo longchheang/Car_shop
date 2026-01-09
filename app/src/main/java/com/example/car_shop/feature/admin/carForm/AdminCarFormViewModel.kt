@@ -52,23 +52,23 @@ class AdminCarFormViewModel @Inject constructor(
     }
 
     fun onNameChange(name: String) {
-        _uiState.value = _uiState.value.copy(name = name, error = null)
+        _uiState.value = _uiState.value.copy(name = name, error = null, nameError = null)
     }
 
     fun onBrandChange(brand: String) {
-        _uiState.value = _uiState.value.copy(brand = brand, error = null)
+        _uiState.value = _uiState.value.copy(brand = brand, error = null, brandError = null)
     }
 
     fun onModelChange(model: String) {
-        _uiState.value = _uiState.value.copy(model = model, error = null)
+        _uiState.value = _uiState.value.copy(model = model, error = null, modelError = null)
     }
 
     fun onYearChange(year: String) {
-        _uiState.value = _uiState.value.copy(year = year, error = null)
+        _uiState.value = _uiState.value.copy(year = year, error = null, yearError = null)
     }
 
     fun onPriceChange(price: String) {
-        _uiState.value = _uiState.value.copy(price = price, error = null)
+        _uiState.value = _uiState.value.copy(price = price, error = null, priceError = null)
     }
 
     fun onDescriptionChange(description: String) {
@@ -76,7 +76,7 @@ class AdminCarFormViewModel @Inject constructor(
     }
 
     fun onMileageChange(mileage: String) {
-        _uiState.value = _uiState.value.copy(mileage = mileage, error = null)
+        _uiState.value = _uiState.value.copy(mileage = mileage, error = null, mileageError = null)
     }
 
     fun onFuelTypeChange(fuelType: String) {
@@ -94,18 +94,67 @@ class AdminCarFormViewModel @Inject constructor(
     fun saveCar(onSuccess: () -> Unit) {
         val state = _uiState.value
 
-        // Validation
-        if (state.name.isBlank() || state.brand.isBlank() || state.model.isBlank()) {
-            _uiState.value = state.copy(error = "Please fill in all required fields")
-            return
+        // Clear all field errors first
+        var updatedState = state.copy(
+            nameError = null,
+            brandError = null,
+            modelError = null,
+            yearError = null,
+            priceError = null,
+            mileageError = null,
+            error = null
+        )
+
+        // Validate required text fields
+        var hasError = false
+
+        if (state.name.isBlank()) {
+            updatedState = updatedState.copy(nameError = "Car name is required")
+            hasError = true
         }
 
-        val year = state.year.toIntOrNull()
-        val price = state.price.toDoubleOrNull()
-        val mileage = state.mileage.toIntOrNull()
+        if (state.brand.isBlank()) {
+            updatedState = updatedState.copy(brandError = "Brand is required")
+            hasError = true
+        }
 
-        if (year == null || price == null || mileage == null) {
-            _uiState.value = state.copy(error = "Please enter valid numbers")
+        if (state.model.isBlank()) {
+            updatedState = updatedState.copy(modelError = "Model is required")
+            hasError = true
+        }
+
+        // Validate year
+        val year = state.year.toIntOrNull()
+        if (state.year.isBlank()) {
+            updatedState = updatedState.copy(yearError = "Year is required")
+            hasError = true
+        } else if (year == null || year < 1900 || year > 2100) {
+            updatedState = updatedState.copy(yearError = "Enter a valid year (1900-2100)")
+            hasError = true
+        }
+
+        // Validate price
+        val price = state.price.toDoubleOrNull()
+        if (state.price.isBlank()) {
+            updatedState = updatedState.copy(priceError = "Price is required")
+            hasError = true
+        } else if (price == null || price < 0) {
+            updatedState = updatedState.copy(priceError = "Enter a valid price")
+            hasError = true
+        }
+
+        // Validate mileage
+        val mileage = state.mileage.toIntOrNull()
+        if (state.mileage.isBlank()) {
+            updatedState = updatedState.copy(mileageError = "Mileage is required")
+            hasError = true
+        } else if (mileage == null || mileage < 0) {
+            updatedState = updatedState.copy(mileageError = "Enter a valid mileage")
+            hasError = true
+        }
+
+        if (hasError) {
+            _uiState.value = updatedState
             return
         }
 
@@ -113,10 +162,10 @@ class AdminCarFormViewModel @Inject constructor(
             name = state.name,
             brand = state.brand,
             model = state.model,
-            year = year,
-            price = price,
+            year = year!!,
+            price = price!!,
             description = state.description,
-            mileage = mileage,
+            mileage = mileage!!,
             fuelType = state.fuelType,
             transmission = state.transmission,
             imageUrl = state.existingImageUrl

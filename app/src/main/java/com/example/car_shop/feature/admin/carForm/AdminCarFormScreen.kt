@@ -144,7 +144,9 @@ fun AdminCarFormScreen(
                     onValueChange = viewModel::onNameChange,
                     label = { Text("Car Name *") },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = !uiState.isSaving
+                    enabled = !uiState.isSaving,
+                    isError = uiState.nameError != null,
+                    supportingText = uiState.nameError?.let { { Text(it) } }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -158,7 +160,9 @@ fun AdminCarFormScreen(
                         onValueChange = viewModel::onBrandChange,
                         label = { Text("Brand *") },
                         modifier = Modifier.weight(1f),
-                        enabled = !uiState.isSaving
+                        enabled = !uiState.isSaving,
+                        isError = uiState.brandError != null,
+                        supportingText = uiState.brandError?.let { { Text(it) } }
                     )
 
                     OutlinedTextField(
@@ -166,7 +170,9 @@ fun AdminCarFormScreen(
                         onValueChange = viewModel::onModelChange,
                         label = { Text("Model *") },
                         modifier = Modifier.weight(1f),
-                        enabled = !uiState.isSaving
+                        enabled = !uiState.isSaving,
+                        isError = uiState.modelError != null,
+                        supportingText = uiState.modelError?.let { { Text(it) } }
                     )
                 }
 
@@ -181,7 +187,9 @@ fun AdminCarFormScreen(
                         onValueChange = viewModel::onYearChange,
                         label = { Text("Year *") },
                         modifier = Modifier.weight(1f),
-                        enabled = !uiState.isSaving
+                        enabled = !uiState.isSaving,
+                        isError = uiState.yearError != null,
+                        supportingText = uiState.yearError?.let { { Text(it) } }
                     )
 
                     OutlinedTextField(
@@ -189,7 +197,9 @@ fun AdminCarFormScreen(
                         onValueChange = viewModel::onPriceChange,
                         label = { Text("Price *") },
                         modifier = Modifier.weight(1f),
-                        enabled = !uiState.isSaving
+                        enabled = !uiState.isSaving,
+                        isError = uiState.priceError != null,
+                        supportingText = uiState.priceError?.let { { Text(it) } }
                     )
                 }
 
@@ -200,7 +210,9 @@ fun AdminCarFormScreen(
                     onValueChange = viewModel::onMileageChange,
                     label = { Text("Mileage (km) *") },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = !uiState.isSaving
+                    enabled = !uiState.isSaving,
+                    isError = uiState.mileageError != null,
+                    supportingText = uiState.mileageError?.let { { Text(it) } }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))

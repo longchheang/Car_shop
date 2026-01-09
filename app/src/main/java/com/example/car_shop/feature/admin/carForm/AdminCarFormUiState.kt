@@ -18,6 +18,13 @@ data class AdminCarFormUiState(
     val existingImageUrl: String = "",
     val isLoading: Boolean = false,
     val isSaving: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    // Field-specific validation errors
+    val nameError: String? = null,
+    val brandError: String? = null,
+    val modelError: String? = null,
+    val yearError: String? = null,
+    val priceError: String? = null,
+    val mileageError: String? = null
 )
 
