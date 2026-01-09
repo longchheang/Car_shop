@@ -34,6 +34,7 @@ fun AdminMainScreen(
     onEditCar: (String) -> Unit,
     onCarClick: (String) -> Unit,
     onEditProfile: () -> Unit,
+    onSetLocation: (String) -> Unit,
     onLogout: () -> Unit,
     viewModel: AdminMainViewModel = androidx.hilt.navigation.compose.hiltViewModel()
 ) {
@@ -103,6 +104,7 @@ fun AdminMainScreen(
                 // Reusing the User Profile Screen, assuming it works for Admin as well.
                 ProfileScreen(
                     onEditProfile = onEditProfile,
+                    onSetLocation = onSetLocation,
                     onLogout = onLogout,
                 )
             }

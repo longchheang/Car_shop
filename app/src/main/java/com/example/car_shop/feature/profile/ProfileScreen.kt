@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -55,6 +56,7 @@ import coil.compose.SubcomposeAsyncImage
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
     onEditProfile: () -> Unit,
+    onSetLocation: (String) -> Unit = {},
     onLogout: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -160,6 +162,15 @@ fun ProfileScreen(
                         text = "Edit Profile",
                         onClick = onEditProfile
                     )
+                    // Set Location option - only visible for admin
+                    if (uiState.user?.isAdmin == true) {
+                        DividerLine()
+                        ProfileMenuItem(
+                            icon = Icons.Default.LocationOn,
+                            text = "Set Location",
+                            onClick = { onSetLocation(uiState.shopLocation) }
+                        )
+                    }
                     DividerLine()
                     ProfileMenuItem(
                         icon = Icons.AutoMirrored.Filled.ExitToApp,

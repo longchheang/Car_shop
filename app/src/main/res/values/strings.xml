@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Car_shop</string>
+    <!-- Replace with your Google Maps API key from Google Cloud Console -->
+    <string name="google_maps_api_key">AIzaSyB89uX1fzQHfDGny-J4brkbpVKcfuYhOIA</string>
 </resources>

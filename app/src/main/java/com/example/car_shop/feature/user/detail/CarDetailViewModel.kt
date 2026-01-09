@@ -8,6 +8,7 @@ import com.example.car_shop.core.model.Inquiry
 import com.example.car_shop.core.repository.AuthRepository
 import com.example.car_shop.core.repository.CarRepository
 import com.example.car_shop.core.repository.InquiryRepository
+import com.example.car_shop.core.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -18,7 +19,8 @@ class CarDetailViewModel @Inject constructor(
     private val carRepository: CarRepository,
     private val authRepository: AuthRepository,
     private val inquiryRepository: InquiryRepository,
-    private val favoritesDataStore: FavoritesDataStore
+    private val favoritesDataStore: FavoritesDataStore,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CarDetailUiState())
@@ -30,11 +32,20 @@ class CarDetailViewModel @Inject constructor(
     private val _isAdmin = MutableStateFlow(false)
     val isAdmin: StateFlow<Boolean> = _isAdmin.asStateFlow()
 
+    private val _shopLocation = MutableStateFlow("")
+    val shopLocation: StateFlow<String> = _shopLocation.asStateFlow()
+
     init {
         viewModelScope.launch {
             // Check if current user is admin
             val currentUser = authRepository.getCurrentUser().getOrNull()
             _isAdmin.value = currentUser?.isAdmin == true
+
+            // Load shop location
+            settingsRepository.getShopLocation()
+                .onSuccess { location ->
+                    _shopLocation.value = location
+                }
         }
     }
 

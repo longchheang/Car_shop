@@ -17,11 +17,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -42,6 +45,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -66,6 +70,7 @@ fun CarDetailScreen(
     val uiState by viewModel.uiState.collectAsState()
     val isFavorite by viewModel.isFavorite.collectAsState()
     val isAdmin by viewModel.isAdmin.collectAsState()
+    val shopLocation by viewModel.shopLocation.collectAsState()
     val scrollState = rememberScrollState()
 
     LaunchedEffect(carId) {
@@ -239,6 +244,7 @@ fun CarDetailScreen(
                     }
 
                     // 5. Floating Action Buttons (Top Bar)
+                    val context = LocalContext.current
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -256,17 +262,52 @@ fun CarDetailScreen(
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
                         }
 
-                        // Favorite Button
-                        SmallFloatingActionButton(
-                            onClick = { viewModel.toggleFavorite() },
-                            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
-                            contentColor = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
-                            elevation = FloatingActionButtonDefaults.elevation(0.dp)
-                        ) {
-                            Icon(
-                                imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                contentDescription = "Favorite"
-                            )
+                        // Right side buttons (Location and Favorite - hidden for admin)
+                        if (!isAdmin) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                // Location Button - uses shop location (same for all cars)
+                                if (shopLocation.isNotBlank()) {
+                                    SmallFloatingActionButton(
+                                        onClick = {
+                                            val gmmIntentUri = if (shopLocation.contains(",")) {
+                                                // If it's coordinates (lat,lng)
+                                                Uri.parse("geo:$shopLocation?q=$shopLocation")
+                                            } else {
+                                                // If it's a place name
+                                                Uri.parse("geo:0,0?q=${Uri.encode(shopLocation)}")
+                                            }
+                                            val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                                            mapIntent.setPackage("com.google.android.apps.maps")
+                                            if (mapIntent.resolveActivity(context.packageManager) != null) {
+                                                context.startActivity(mapIntent)
+                                            } else {
+                                                // Fallback to browser if Google Maps not installed
+                                                val browserIntent = Intent(Intent.ACTION_VIEW,
+                                                    Uri.parse("https://www.google.com/maps/search/?api=1&query=${Uri.encode(shopLocation)}"))
+                                                context.startActivity(browserIntent)
+                                            }
+                                        },
+                                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                                        contentColor = MaterialTheme.colorScheme.primary,
+                                        elevation = FloatingActionButtonDefaults.elevation(0.dp)
+                                    ) {
+                                        Icon(Icons.Default.LocationOn, "View Location")
+                                    }
+                                }
+
+                                // Favorite Button
+                                SmallFloatingActionButton(
+                                    onClick = { viewModel.toggleFavorite() },
+                                    containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                                    contentColor = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+                                    elevation = FloatingActionButtonDefaults.elevation(0.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                        contentDescription = "Favorite"
+                                    )
+                                }
+                            }
                         }
                     }
                 }

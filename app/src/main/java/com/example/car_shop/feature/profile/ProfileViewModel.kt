@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.car_shop.core.model.User
 import com.example.car_shop.core.repository.AuthRepository
+import com.example.car_shop.core.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
@@ -37,6 +39,10 @@ class ProfileViewModel @Inject constructor(
                             phone = user.phone,
                             isLoading = false
                         )
+                        // Load shop location if admin
+                        if (user.isAdmin) {
+                            loadShopLocation()
+                        }
                     }
                 }
                 .onFailure { error ->
@@ -117,6 +123,62 @@ class ProfileViewModel @Inject constructor(
 
     fun logout() {
         authRepository.logout()
+    }
+
+    // Shop location management (admin only)
+    private fun loadShopLocation() {
+        viewModelScope.launch {
+            settingsRepository.getShopLocation()
+                .onSuccess { location ->
+                    _uiState.value = _uiState.value.copy(
+                        shopLocation = location,
+                        locationInput = location
+                    )
+                }
+        }
+    }
+
+    fun showLocationDialog() {
+        _uiState.value = _uiState.value.copy(
+            showLocationDialog = true,
+            locationInput = _uiState.value.shopLocation
+        )
+    }
+
+    fun hideLocationDialog() {
+        _uiState.value = _uiState.value.copy(showLocationDialog = false)
+    }
+
+    fun onLocationInputChange(location: String) {
+        _uiState.value = _uiState.value.copy(locationInput = location)
+    }
+
+    fun saveShopLocation() {
+        val location = _uiState.value.locationInput
+        if (location.isBlank()) {
+            _uiState.value = _uiState.value.copy(error = "Please enter a location")
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isSavingLocation = true)
+
+            settingsRepository.setShopLocation(location)
+                .onSuccess {
+                    _uiState.value = _uiState.value.copy(
+                        shopLocation = location,
+                        showLocationDialog = false,
+                        isSavingLocation = false,
+                        successMessage = "Location saved successfully"
+                    )
+                }
+                .onFailure { error ->
+                    _uiState.value = _uiState.value.copy(
+                        isSavingLocation = false,
+                        error = error.message
+                    )
+                }
+        }
     }
 }
 

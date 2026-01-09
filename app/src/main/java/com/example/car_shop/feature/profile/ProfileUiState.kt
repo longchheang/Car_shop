@@ -10,6 +10,11 @@ data class ProfileUiState(
     val isUpdating: Boolean = false,
     val isUploadingImage: Boolean = false,
     val error: String? = null,
-    val successMessage: String? = null
+    val successMessage: String? = null,
+    // Shop location for admin
+    val shopLocation: String = "",
+    val showLocationDialog: Boolean = false,
+    val locationInput: String = "",
+    val isSavingLocation: Boolean = false
 )
 

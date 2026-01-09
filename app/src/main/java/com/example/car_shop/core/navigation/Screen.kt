@@ -19,6 +19,9 @@ sealed class Screen(val route: String) {
     }
     object AdminInquiries : Screen("admin_inquiries")
     object EditProfile : Screen("edit_profile")
+    object MapPicker : Screen("map_picker?location={location}") {
+        fun createRoute(location: String = "") = "map_picker?location=$location"
+    }
 
     // Main Container Screens
     object UserMain : Screen("user_main")

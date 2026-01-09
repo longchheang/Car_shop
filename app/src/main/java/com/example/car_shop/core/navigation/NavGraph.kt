@@ -1,5 +1,6 @@
 package com.example.car_shop.core.navigation
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -13,6 +14,7 @@ import com.example.car_shop.feature.auth.register.RegisterScreen
 import com.example.car_shop.feature.onboarding.OnboardingScreen
 import com.example.car_shop.feature.user.detail.CarDetailScreen
 import com.example.car_shop.feature.profile.EditProfileScreen
+import com.example.car_shop.feature.profile.MapPickerScreen
 
 
 @Composable
@@ -104,6 +106,9 @@ fun NavGraph(
                 onEditProfile = {
                     navController.navigate(Screen.EditProfile.route)
                 },
+                onSetLocation = { currentLocation ->
+                    navController.navigate(Screen.MapPicker.createRoute(Uri.encode(currentLocation)))
+                },
                 onLogout = {
                     navController.navigate(Screen.Login.route) {
                         popUpTo(0) { inclusive = true }
@@ -158,6 +163,22 @@ fun NavGraph(
         composable(Screen.UserInquiries.route) {
             com.example.car_shop.feature.user.inquiries.UserInquiriesScreen(
                 onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Screen.MapPicker.route,
+            arguments = listOf(navArgument("location") {
+                type = NavType.StringType
+                defaultValue = ""
+            })
+        ) { backStackEntry ->
+            val location = Uri.decode(backStackEntry.arguments?.getString("location") ?: "")
+            MapPickerScreen(
+                initialLocation = location,
+                onNavigateBack = {
                     navController.popBackStack()
                 }
             )
