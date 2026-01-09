@@ -9,10 +9,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.example.car_shop.data.repository.AuthRepository
-import com.example.car_shop.navigation.NavGraph
-import com.example.car_shop.navigation.Screen
-import com.example.car_shop.ui.theme.CarShopTheme
+import com.example.car_shop.core.repository.AuthRepository
+import com.example.car_shop.core.navigation.NavGraph
+import com.example.car_shop.core.navigation.Screen
+import com.example.car_shop.shared.theme.CarShopTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
